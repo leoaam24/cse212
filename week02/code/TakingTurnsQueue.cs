@@ -39,10 +39,16 @@ public class TakingTurnsQueue
         }
         else
         {
+            //Person class is called assigned to a variable named person
+            //Push the person entry to the queue, using the enqueue method
+            //First condition statement is for entries with more than 1 turns
+            //The Else If statement are for entries with infinite number of turns
             Person person = _people.Dequeue();
             if (person.Turns > 1)
             {
                 person.Turns -= 1;
+                _people.Enqueue(person);
+            } else if (person.Turns <= 0) {
                 _people.Enqueue(person);
             }
 

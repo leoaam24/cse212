@@ -13,9 +13,13 @@ public class PersonQueue
     /// <param name="person">The person to add</param>
     public void Enqueue(Person person)
     {
-        _queue.Insert(0, person);
+        _queue.Insert(Length, person);
     }
 
+
+    //Remove a person from the queue
+    //Since this is a queue it will have a FIFO (First In, First Out) behavior
+    //For this case, it will be always at index 0
     public Person Dequeue()
     {
         var person = _queue[0];
