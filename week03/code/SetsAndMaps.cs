@@ -1,4 +1,7 @@
+using System.Net.Mail;
 using System.Text.Json;
+using System.Text.RegularExpressions;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
 public static class SetsAndMaps
 {
@@ -21,8 +24,48 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        List<string> result = [];
+        List<string> currentList = new List<string>(words);
+        HashSet<char> hashWord = new HashSet<char>(currentList[0]);
+        HashSet<char> tempHashWord = new HashSet<char>();
+            int i = 1;
+            while (i != 0) {
+                if (i > currentList.Count - 1) {
+                    currentList.Remove(currentList[0]);
+                    if (currentList.Count != 0) {
+                        hashWord = new HashSet<char>(currentList[0]);
+                        i = 1;
+                    } else {
+                        i = 0;
+                    }
+                } else {
+                    if (i < currentList.Count){
+                        tempHashWord = new HashSet<char>(currentList[i]);
+                        if (hashWord.SetEquals(tempHashWord)){
+                            string hWord1 = string.Join("", hashWord);
+                            string hWord2 = string.Join("", tempHashWord);
+                            string resultString = $"{hWord1}&{hWord2}";
+                            result.Add(resultString);
+                            currentList.Remove(currentList[i]);
+                            currentList.Remove(currentList[0]);
+                            if (currentList.Count != 0) {
+                             hashWord = new HashSet<char>(currentList[0]);
+                                i = 1;
+                            } else {
+                                i = 0;
+                            }
+                        } else {
+                            i++;
+                        }
+                    }
+                }     
+            }
+            
+
+        
+
+        string[] Finalresult = result.ToArray();
+        return Finalresult;
     }
 
     /// <summary>
@@ -42,7 +85,13 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            var degreeTitle = fields[3];
+
+            if (!degrees.ContainsKey(degreeTitle)){
+                degrees.Add(degreeTitle, 1);
+            } else {
+                degrees[degreeTitle] = degrees[degreeTitle]+1;
+            }
         }
 
         return degrees;
@@ -66,8 +115,26 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
+        string noWhiteSpaceWord1 = Regex.Replace(word1, @"\s+", "");
+        string noWhiteSpaceWord2 = Regex.Replace(word2, @"\s+", "");
+        char[] toArrayWord1 = noWhiteSpaceWord1.ToCharArray();
+        string arrayedWord1 = string.Join(",", noWhiteSpaceWord1.ToLower());
+        char[] toArrayWord2 = noWhiteSpaceWord2.ToCharArray();
+        string arrayedWord2 = string.Join(",", noWhiteSpaceWord2.ToLower());
+        HashSet<char> hashedWord1 = new HashSet<char>(arrayedWord1.ToLower());
+        HashSet<char> hashedWord2 = new HashSet<char>(arrayedWord2.ToLower());
+
+       if (toArrayWord1.Length == toArrayWord2.Length && hashedWord1.SetEquals(hashedWord2)) {
+
+            if (arrayedWord1.OrderBy(x => x).SequenceEqual(arrayedWord2.OrderBy(x => x))){
+            return true;
+            } else {
+                return false;
+            }
+       }else {
         return false;
+       }
+        
     }
 
     /// <summary>
@@ -93,14 +160,26 @@ public static class SetsAndMaps
         using var reader = new StreamReader(jsonStream);
         var json = reader.ReadToEnd();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
+        List<string> toReturn = new();
+        
         var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
+        List<string> result = new();
 
+       foreach (var item in featureCollection.Features) {
+            string place = item.Place;
+            double magnitude = item.Mag;
+
+            string toString = $"{place} - Mag {magnitude}";
+            result.Add(toString);
+       };
+
+       string[] finalResult = result.ToArray();
+       return finalResult;
         // TODO Problem 5:
         // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+
     }
 }
