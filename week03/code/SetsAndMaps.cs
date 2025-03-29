@@ -24,48 +24,85 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        List<string> result = [];
-        List<string> currentList = new List<string>(words);
-        HashSet<char> hashWord = new HashSet<char>(currentList[0]);
-        HashSet<char> tempHashWord = new HashSet<char>();
-            int i = 1;
-            while (i != 0) {
-                if (i > currentList.Count - 1) {
-                    currentList.Remove(currentList[0]);
-                    if (currentList.Count != 0) {
-                        hashWord = new HashSet<char>(currentList[0]);
-                        i = 1;
-                    } else {
-                        i = 0;
-                    }
-                } else {
-                    if (i < currentList.Count){
-                        tempHashWord = new HashSet<char>(currentList[i]);
-                        if (hashWord.SetEquals(tempHashWord)){
-                            string hWord1 = string.Join("", hashWord);
-                            string hWord2 = string.Join("", tempHashWord);
-                            string resultString = $"{hWord1}&{hWord2}";
-                            result.Add(resultString);
-                            currentList.Remove(currentList[i]);
-                            currentList.Remove(currentList[0]);
-                            if (currentList.Count != 0) {
-                             hashWord = new HashSet<char>(currentList[0]);
-                                i = 1;
-                            } else {
-                                i = 0;
-                            }
-                        } else {
-                            i++;
-                        }
-                    }
-                }     
+        Dictionary<string, List<string>> groups = new Dictionary<string, List<string>>();
+
+        // Group words by their canonical form (sorted unique characters)
+        foreach (string word in words)
+        {
+            char[] chars = word.Distinct().OrderBy(c => c).ToArray();
+            string key = new string(chars);
+
+            if (!groups.TryGetValue(key, out var group))
+            {
+                group = new List<string>();
+                groups[key] = group;
             }
+            group.Add(word);
+        }
+
+        List<string> result = new List<string>();
+
+        // Generate pairs from each group
+        foreach (var group in groups.Values)
+        {
+            // Pair consecutive elements only if they are distinct
+            for (int i = 0; i < group.Count; i += 2)
+            {
+                if (i + 1 < group.Count)
+                {
+                    string word1 = group[i];
+                    string word2 = group[i + 1];
+                    if (word1 != word2)
+                    {
+                        result.Add($"{word1}&{word2}");
+                    }
+                }
+            }
+        }
+
+        return result.ToArray();
+        // List<string> result = [];
+        // List<string> currentList = new List<string>(words);
+        // HashSet<char> hashWord = new HashSet<char>(currentList[0]);
+        // HashSet<char> tempHashWord = new HashSet<char>();
+        //     int i = 1;
+        //     while (i != 0) {
+        //         if (i > currentList.Count - 1) {
+        //             currentList.Remove(currentList[0]);
+        //             if (currentList.Count != 0) {
+        //                 hashWord = new HashSet<char>(currentList[0]);
+        //                 i = 1;
+        //             } else {
+        //                 i = 0;
+        //             }
+        //         } else {
+        //             if (i < currentList.Count){
+        //                 tempHashWord = new HashSet<char>(currentList[i]);
+        //                 if (hashWord.SetEquals(tempHashWord)){
+        //                     string hWord1 = string.Join("", hashWord);
+        //                     string hWord2 = string.Join("", tempHashWord);
+        //                     string resultString = $"{hWord1}&{hWord2}";
+        //                     result.Add(resultString);
+        //                     currentList.Remove(currentList[i]);
+        //                     currentList.Remove(currentList[0]);
+        //                     if (currentList.Count != 0) {
+        //                      hashWord = new HashSet<char>(currentList[0]);
+        //                         i = 1;
+        //                     } else {
+        //                         i = 0;
+        //                     }
+        //                 } else {
+        //                     i++;
+        //                 }
+        //             }
+        //         }     
+        //     }
             
 
         
 
-        string[] Finalresult = result.ToArray();
-        return Finalresult;
+        // string[] Finalresult = result.ToArray();
+        // return Finalresult;
     }
 
     /// <summary>
