@@ -1,8 +1,12 @@
+using System.Transactions;
+
 public class Node
 {
     public int Data { get; set; }
     public Node? Right { get; private set; }
     public Node? Left { get; private set; }
+
+    List<int> tempList = new(); 
 
     public Node(int data)
     {
@@ -11,9 +15,10 @@ public class Node
 
     public void Insert(int value)
     {
-        // TODO Start Problem 1
+        if (!tempList.Contains(value)){
+            tempList.Add(value);
 
-        if (value < Data)
+            if (value < Data)
         {
             // Insert to the left
             if (Left is null)
@@ -29,17 +34,74 @@ public class Node
             else
                 Right.Insert(value);
         }
+        }
     }
 
     public bool Contains(int value)
-    {
-        // TODO Start Problem 2
-        return false;
+    {   
+        bool result;
+        if (value == Data) {
+            return true;
+        } else {
+            if (value < Data) {
+            if (Left is null) {
+                return false;
+            } else {
+                result = Left.Contains(value);
+            }
+        } else if (value > Data) {
+            if (Right is null){
+                return false;
+            } else {
+                result = Right.Contains(value);
+            }
+        } else {
+            result = false;
+        }
+        }
+
+        
+        return result;
     }
 
     public int GetHeight()
     {
-        // TODO Start Problem 4
-        return 0; // Replace this line with the correct return statement(s)
+        int leftResult = 0;
+        int rightResult = 0;
+        int finalResult = 0;
+        if (this == null) {
+            return 0;
+        } else {
+            
+            if (Left is not null){
+              leftResult =  Left.GetHeight() + 1;
+            } else {
+                if (Right is not null){
+                    rightResult = Right.GetHeight() + 1;
+                } else {
+                    return 1;
+                }
+            }
+            if (Right is not null){
+                rightResult = Right.GetHeight() + 1;
+            } else {
+                if (Left is not null){
+                    leftResult = Left.GetHeight() + 1;
+                } else {
+                    return 1;
+                }
+            }
+
+
+        }
+
+        if (leftResult > rightResult){
+            finalResult = leftResult;
+        } else {
+            finalResult = rightResult;
+        }
+
+        
+        return finalResult;
     }
 }
